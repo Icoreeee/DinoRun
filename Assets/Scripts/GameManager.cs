@@ -1,4 +1,7 @@
+using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
+using Unity.Mathematics;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +14,14 @@ public class GameManager : MonoBehaviour
     public float GameSpeed { get; private set; }
 
     private bool _isGameStopped;
+
+    public TextMeshProUGUI gameOverText;
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI topScoreText;
+    public Button retryButton;
+
+    private float score;
+    
     
 
     private void Awake()
@@ -37,17 +48,19 @@ public class GameManager : MonoBehaviour
     {
         _player = FindObjectOfType<Player>();
         _spawner = FindObjectOfType<Spawner>();
-        
-        NewGame();
     }
 
-    private void NewGame()
+    public void NewGame()
     {
         _isGameStopped = false;
         GameSpeed = initialGameSpeed;
+        _player.OnRunning();
 
         _player.gameObject.SetActive(true);
         _spawner.gameObject.SetActive(true);
+        gameOverText.gameObject.SetActive(false);
+        retryButton.gameObject.SetActive(false);
+        UpdateTopScore();
     }
 
     public void GameOver()
@@ -63,13 +76,37 @@ public class GameManager : MonoBehaviour
         GameSpeed = 0f;
         
         _spawner.gameObject.SetActive(false);
+        gameOverText.gameObject.SetActive(true);
+        retryButton.gameObject.SetActive(true);
+        UpdateTopScore();
+        score = 0;
+        scoreText.text = score.ToString("D7");
     }
 
     private void Update()
     {
         if (_isGameStopped == false)
         {
-            GameSpeed += gameSpeedIncrease * Time.deltaTime;    
+            GameSpeed += gameSpeedIncrease * Time.deltaTime;
+            score += GameSpeed * Time.deltaTime;
+            scoreText.text = Mathf.FloorToInt(score).ToString("D7");
         }
+    }
+
+    private void UpdateTopScore()
+    {
+        float topScore = PlayerPrefs.GetFloat("topscore", 0);
+        if (score > topScore)
+       {
+           topScore = score;
+           PlayerPrefs.SetFloat("topscore", topScore);
+       }
+       
+       topScoreText.text = Mathf.FloorToInt(topScore).ToString("D7");
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

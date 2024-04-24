@@ -17,8 +17,12 @@ public class Player : MonoBehaviour
 
     private void OnEnable()
     {
-        _animator.SetBool("isMoving", true);
         _direction = Vector3.zero;
+    }
+
+    public void OnRunning()
+    {
+        _animator.SetBool("isMoving", true);
     }
 
     private void Update()
