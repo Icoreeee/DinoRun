@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -6,6 +7,7 @@ public class Player : MonoBehaviour
     [SerializeField] private CharacterController _character;
     private Vector3 _direction;
     private Animator _animator;
+    public static bool isGod;
     
 
     public float gravity = 9.81f * 2f;
@@ -62,10 +64,29 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        _animator.SetBool("isMoving", false);
-        if (other.CompareTag("Obstacle"))
+        if (other.CompareTag("Obstacle") && isGod == false)
         {
+            _animator.SetBool("isMoving", false);
             GameManager.Instance.GameOver();
         }
+
+        if (other.CompareTag("SuperEgg"))
+        {
+            StartCoroutine(GodMode());
+        }
+    }
+    
+    IEnumerator GodMode()
+    {
+        GameManager.Instance.timeLeft = 10;
+        transform.localScale = new Vector3(1.4f, 1.4f, 1.4f);
+        transform.position = new Vector3(transform.position.x, 0.18f);
+        isGod = true;
+
+        yield return new WaitForSeconds(10);
+
+        transform.localScale = new Vector3(1f, 1f, 1f);
+        transform.position = new Vector3(transform.position.x, 0f);
+        isGod = false;
     }
 }

@@ -1,8 +1,6 @@
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,8 +19,11 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI topScoreText;
     public Button retryButton;
     public GameObject pauseMenu;
+    public TextMeshProUGUI godModeText;
+    public TextMeshProUGUI godModeTimer;
 
     private float score;
+    public float timeLeft;
 
 
 
@@ -76,6 +77,13 @@ public class GameManager : MonoBehaviour
             Destroy(obstacle.gameObject);
         }
 
+        SuperEgg[] superEggs = FindObjectsOfType<SuperEgg>();
+        
+        foreach (var superEgg in superEggs)
+        {
+            Destroy(superEgg.gameObject);
+        }
+
         _isGameStopped = true;
         GameSpeed = 0f;
         
@@ -94,6 +102,11 @@ public class GameManager : MonoBehaviour
             GameSpeed += gameSpeedIncrease * Time.deltaTime;
             score += GameSpeed * Time.deltaTime;
             scoreText.text = Mathf.FloorToInt(score).ToString("D7");
+            if (Player.isGod)
+            {
+                godModeText.text = "God Mode (sec):" + timeLeft.ToString("F");
+                timeLeft -= Time.deltaTime;
+            }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 PauseGame();
