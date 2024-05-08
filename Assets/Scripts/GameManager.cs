@@ -2,6 +2,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,16 +20,18 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI topScoreText;
     public Button retryButton;
+    public GameObject pauseMenu;
 
     private float score;
-    
-    
+
+
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            Time.timeScale = 0;
         }
         else
         {
@@ -52,6 +55,7 @@ public class GameManager : MonoBehaviour
 
     public void NewGame()
     {
+        Time.timeScale = 1;
         _isGameStopped = false;
         GameSpeed = initialGameSpeed;
         _player.OnRunning();
@@ -90,6 +94,10 @@ public class GameManager : MonoBehaviour
             GameSpeed += gameSpeedIncrease * Time.deltaTime;
             score += GameSpeed * Time.deltaTime;
             scoreText.text = Mathf.FloorToInt(score).ToString("D7");
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                PauseGame();
+            }
         }
     }
 
@@ -103,6 +111,18 @@ public class GameManager : MonoBehaviour
        }
        
        topScoreText.text = Mathf.FloorToInt(topScore).ToString("D7");
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+        pauseMenu.gameObject.SetActive(true);
+    }
+    
+    public void ContinueGame()
+    {
+        Time.timeScale = 1;
+        pauseMenu.gameObject.SetActive(true);
     }
 
     public void ExitGame()

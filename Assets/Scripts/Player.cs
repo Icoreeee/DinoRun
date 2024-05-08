@@ -3,9 +3,10 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
-    private CharacterController _character;
+    [SerializeField] private CharacterController _character;
     private Vector3 _direction;
     private Animator _animator;
+    
 
     public float gravity = 9.81f * 2f;
     public float jumpForce = 8f;
@@ -33,9 +34,26 @@ public class Player : MonoBehaviour
         {
             _direction = Vector3.down;
 
+
             if (Input.GetButton("Jump"))
             {
                 _direction = Vector3.up * jumpForce;
+            }
+
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                _animator.SetBool("isCrouching", true);
+                _character.radius = 0.31f;
+                _character.height = 0f;
+                transform.position = new Vector3(transform.position.x, -0.19f);
+            }
+            
+            if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
+            {
+                _animator.SetBool("isCrouching", false);
+                _character.radius = 0.44f;
+                _character.height = 0.96f;
+                transform.position = new Vector3(transform.position.x, 0f);
             }
         }
 
