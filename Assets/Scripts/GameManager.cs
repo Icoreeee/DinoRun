@@ -4,8 +4,11 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    private Player _player;
-    private Spawner _spawner;
+    public Player _player;
+    public Player _player2;
+    public Spawner _spawner1;
+    public Spawner _spawner2;
+    public bool isMultiplayer;
     public static GameManager Instance { get; private set; }
     
     public float initialGameSpeed = 5f;
@@ -19,10 +22,14 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI topScoreText;
     public Button retryButton;
     public GameObject pauseMenu;
-    public TextMeshProUGUI godModeText;
-    public TextMeshProUGUI godModeTimer;
-
+    public TextMeshProUGUI godModeTextP1;
+    public TextMeshProUGUI godModeTextP2;
+    public TextMeshProUGUI livesPlayer1;
+    public TextMeshProUGUI livesPlayer2;
+    
     private float score;
+    private int livesP1;
+    private int livesP2;
     public float timeLeft;
 
 
@@ -48,24 +55,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        _player = FindObjectOfType<Player>();
-        _spawner = FindObjectOfType<Spawner>();
-    }
-
     public void NewGame()
     {
         Time.timeScale = 1;
         _isGameStopped = false;
         GameSpeed = initialGameSpeed;
         _player.OnRunning();
+        if (isMultiplayer)
+        {
+            _player2.OnRunning();
+            livesP1 = 3;
+            livesP2 = 3;
+        }
 
         _player.gameObject.SetActive(true);
-        _spawner.gameObject.SetActive(true);
+        _spawner1.gameObject.SetActive(true);
+        _spawner2.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(false);
         retryButton.gameObject.SetActive(false);
-        UpdateTopScore();
+        if (isMultiplayer == false) UpdateTopScore();
     }
 
     public void GameOver()
@@ -87,12 +95,27 @@ public class GameManager : MonoBehaviour
         _isGameStopped = true;
         GameSpeed = 0f;
         
-        _spawner.gameObject.SetActive(false);
+        _spawner1.gameObject.SetActive(false);
+        _spawner2.gameObject.SetActive(false);
         gameOverText.gameObject.SetActive(true);
         retryButton.gameObject.SetActive(true);
-        UpdateTopScore();
-        score = 0;
-        scoreText.text = score.ToString("D7");
+        _player.StopAnimation();
+        _player.ResetGodMode();
+        if (isMultiplayer)
+        {
+            _player2.ResetGodMode();
+            _player2.StopAnimation();
+            livesP1 = 0;
+            livesP2 = 0;
+        }
+        
+        if (isMultiplayer == false)
+        {
+            UpdateTopScore();
+            score = 0;
+            scoreText.text = score.ToString("D7");
+        }
+        
     }
 
     private void Update()
@@ -100,13 +123,25 @@ public class GameManager : MonoBehaviour
         if (_isGameStopped == false)
         {
             GameSpeed += gameSpeedIncrease * Time.deltaTime;
-            score += GameSpeed * Time.deltaTime;
-            scoreText.text = Mathf.FloorToInt(score).ToString("D7");
-            if (Player.isGod)
+
+            if (isMultiplayer == false)
             {
-                godModeText.text = "God Mode (sec):" + timeLeft.ToString("F");
+                score += GameSpeed * Time.deltaTime;
+                scoreText.text = Mathf.FloorToInt(score).ToString("D7");
+            }
+            
+            if (_player.isGod)
+            {
+                godModeTextP1.text = "God Mode Player 1(sec):" + timeLeft.ToString("F");
                 timeLeft -= Time.deltaTime;
             }
+            
+            if (_player2.isGod)
+            {
+                godModeTextP2.text = "God Mode Player 2(sec):" + timeLeft.ToString("F");
+                timeLeft -= Time.deltaTime;
+            }
+            
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 PauseGame();

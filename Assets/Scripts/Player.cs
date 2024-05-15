@@ -7,7 +7,9 @@ public class Player : MonoBehaviour
     [SerializeField] private CharacterController _character;
     private Vector3 _direction;
     private Animator _animator;
-    public static bool isGod;
+    public bool isGod;
+    public KeyCode jumpBtn;
+    public KeyCode crouchBtn;
     
 
     public float gravity = 9.81f * 2f;
@@ -28,21 +30,25 @@ public class Player : MonoBehaviour
         _animator.SetBool("isMoving", true);
     }
 
+    public bool isGrounded;
+
+    public bool IsGrounded()
+    {
+        return Physics.Raycast(transform.position, Vector3.down, .5f);
+    }
     private void Update()
     {
         _direction += Vector3.down * (gravity * Time.deltaTime);
 
-        if (_character.isGrounded)
+        isGrounded = IsGrounded();
+        if (isGrounded)
         {
-            _direction = Vector3.down;
-
-
-            if (Input.GetButton("Jump"))
+            if (Input.GetKeyDown(jumpBtn))
             {
                 _direction = Vector3.up * jumpForce;
             }
 
-            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            if (Input.GetKeyDown(crouchBtn))
             {
                 _animator.SetBool("isCrouching", true);
                 _character.radius = 0.31f;
@@ -50,7 +56,7 @@ public class Player : MonoBehaviour
                 transform.position = new Vector3(transform.position.x, -0.19f);
             }
             
-            if (Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.DownArrow))
+            if (Input.GetKeyUp(crouchBtn))
             {
                 _animator.SetBool("isCrouching", false);
                 _character.radius = 0.44f;
@@ -62,11 +68,15 @@ public class Player : MonoBehaviour
         _character.Move(_direction * Time.deltaTime);
     }
 
+    public void StopAnimation()
+    {
+        _animator.SetBool("isMoving", false);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Obstacle") && isGod == false)
         {
-            _animator.SetBool("isMoving", false);
             GameManager.Instance.GameOver();
         }
 
@@ -74,6 +84,14 @@ public class Player : MonoBehaviour
         {
             StartCoroutine(GodMode());
         }
+    }
+
+    public void ResetGodMode()
+    {
+        StopAllCoroutines();
+        transform.localScale = new Vector3(1f, 1f, 1f);
+        transform.position = new Vector3(transform.position.x, 0f);
+        isGod = false;
     }
     
     IEnumerator GodMode()
