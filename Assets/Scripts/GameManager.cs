@@ -1,6 +1,7 @@
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class GameManager : MonoBehaviour
     
     public float initialGameSpeed = 5f;
     public float gameSpeedIncrease = 0.1f;
-    public float GameSpeed { get; private set; }
+    public float GameSpeed { get; set; }
+    public float GameSpeed2 { get; set; }
 
     private bool _isGameStopped;
 
@@ -28,9 +30,6 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI livesPlayer2;
     
     private float score;
-    private int livesP1;
-    private int livesP2;
-    public float timeLeft;
 
 
 
@@ -61,16 +60,17 @@ public class GameManager : MonoBehaviour
         _isGameStopped = false;
         GameSpeed = initialGameSpeed;
         _player.OnRunning();
-        if (isMultiplayer)
-        {
-            _player2.OnRunning();
-            livesP1 = 3;
-            livesP2 = 3;
-        }
-
         _player.gameObject.SetActive(true);
         _spawner1.gameObject.SetActive(true);
-        _spawner2.gameObject.SetActive(true);
+        
+        if (isMultiplayer)
+        {
+            GameSpeed2 = initialGameSpeed;
+            _player2.gameObject.SetActive(true);
+            _spawner2.gameObject.SetActive(true);
+            _player2.OnRunning();
+        }
+        
         gameOverText.gameObject.SetActive(false);
         retryButton.gameObject.SetActive(false);
         if (isMultiplayer == false) UpdateTopScore();
@@ -96,25 +96,33 @@ public class GameManager : MonoBehaviour
         GameSpeed = 0f;
         
         _spawner1.gameObject.SetActive(false);
-        _spawner2.gameObject.SetActive(false);
+        if (_spawner2)
+        {
+            _spawner2.gameObject.SetActive(false);
+        }
         gameOverText.gameObject.SetActive(true);
         retryButton.gameObject.SetActive(true);
         _player.StopAnimation();
         _player.ResetGodMode();
+        godModeTextP1.text = "God Mode Player 1 (sec): 0:00";
+        
         if (isMultiplayer)
         {
             _player2.ResetGodMode();
             _player2.StopAnimation();
-            livesP1 = 0;
-            livesP2 = 0;
+            GameSpeed2 = 0f;
+            godModeTextP2.text = "God Mode Player 2 (sec): 0:00";
+            if (_player.lives > _player2.lives) gameOverText.text = "Player 1 Won!";
+            else gameOverText.text = "Player 2 Won!";
         }
         
         if (isMultiplayer == false)
         {
             UpdateTopScore();
-            score = 0;
-            scoreText.text = score.ToString("D7");
+            score = 0.0f;
+            scoreText.text = Mathf.FloorToInt(score).ToString("D7");
         }
+
         
     }
 
@@ -130,16 +138,21 @@ public class GameManager : MonoBehaviour
                 scoreText.text = Mathf.FloorToInt(score).ToString("D7");
             }
             
+            if (isMultiplayer) GameSpeed2 += gameSpeedIncrease * Time.deltaTime;
+            
             if (_player.isGod)
             {
-                godModeTextP1.text = "God Mode Player 1(sec):" + timeLeft.ToString("F");
-                timeLeft -= Time.deltaTime;
+                godModeTextP1.text = "God Mode Player 1 (sec): " + _player.timeleft.ToString("F");
+                _player.timeleft -= Time.deltaTime;
             }
-            
-            if (_player2.isGod)
+
+            if(_player2)
             {
-                godModeTextP2.text = "God Mode Player 2(sec):" + timeLeft.ToString("F");
-                timeLeft -= Time.deltaTime;
+                if (_player2.isGod)
+                {
+                    godModeTextP2.text = "God Mode Player 2 (sec): " + _player2.timeleft.ToString("F");
+                    _player2.timeleft -= Time.deltaTime;
+                }
             }
             
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -163,6 +176,11 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame()
     {
+        if (Time.timeScale == 0)
+        {
+            ContinueGame();
+            return;
+        }
         Time.timeScale = 0;
         pauseMenu.gameObject.SetActive(true);
     }
@@ -170,11 +188,11 @@ public class GameManager : MonoBehaviour
     public void ContinueGame()
     {
         Time.timeScale = 1;
-        pauseMenu.gameObject.SetActive(true);
+        pauseMenu.gameObject.SetActive(false);
     }
 
     public void ExitGame()
     {
-        Application.Quit();
+        SceneManager.LoadScene(0);
     }
 }

@@ -16,6 +16,8 @@ public class Spawner : MonoBehaviour
     public float minSpawnRate = 1f;
     public float maxSpawnRate = 2f;
 
+    public bool isPlayer2;
+    
     private void OnEnable()
     {
         Invoke(nameof(Spawn), Random.Range(minSpawnRate, maxSpawnRate));
@@ -35,6 +37,8 @@ public class Spawner : MonoBehaviour
             if (spawnChance < obj.spawnChance)
             {
                 GameObject obstacle = Instantiate(obj.prefab);
+                if(obstacle.GetComponent<Obstacle>() != null)
+                    obstacle.GetComponent<Obstacle>().isPlayer2 = isPlayer2;
                 obstacle.transform.position += transform.position;
                 break;
             }

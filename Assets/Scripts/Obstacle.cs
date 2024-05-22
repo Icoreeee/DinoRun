@@ -3,6 +3,7 @@ using UnityEngine;
 public class Obstacle : MonoBehaviour
 {
     private float _leftEdge;
+    public bool isPlayer2;
 
     private void Start()
     {
@@ -11,7 +12,7 @@ public class Obstacle : MonoBehaviour
 
     private void Update()
     {
-        transform.position += Vector3.left * (GameManager.Instance.GameSpeed * Time.deltaTime);
+        transform.position += Vector3.left * ((isPlayer2 ? GameManager.Instance.GameSpeed2 : GameManager.Instance.GameSpeed) * Time.deltaTime);
 
         if (transform.position.x < _leftEdge)
         {

@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -14,10 +15,16 @@ public class Player : MonoBehaviour
 
     public float gravity = 9.81f * 2f;
     public float jumpForce = 8f;
+    public bool isGrounded;
+    
+    public float timeleft = 10;
+    public int lives;
+    
     private void Awake()
     {
         _character = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
+        
     }
 
     private void OnEnable()
@@ -28,13 +35,16 @@ public class Player : MonoBehaviour
     public void OnRunning()
     {
         _animator.SetBool("isMoving", true);
+        lives = 3;
+        if(GameManager.Instance.livesPlayer2) GameManager.Instance.livesPlayer2.text = lives.ToString();
+        if(GameManager.Instance.livesPlayer1) GameManager.Instance.livesPlayer1.text = lives.ToString();
     }
 
-    public bool isGrounded;
+    
 
     public bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, .5f);
+        return Physics.Raycast(transform.position, Vector3.down, isGod ? 1f : .5f);
     }
     private void Update()
     {
@@ -75,15 +85,49 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Obstacle") && isGod == false)
-        {
-            GameManager.Instance.GameOver();
-        }
-
         if (other.CompareTag("SuperEgg"))
         {
+            StopAllCoroutines();
             StartCoroutine(GodMode());
+            return;
         }
+        
+        if (!GameManager.Instance.isMultiplayer)
+        {
+            if (other.CompareTag("Obstacle") && isGod == false)
+            {
+                GameManager.Instance.GameOver();
+            }
+        }
+        else
+        {
+            if (other.CompareTag("Obstacle") && lives != 0 && !isGod)
+            {
+                lives--;
+                if(other.GetComponent<Obstacle>().isPlayer2)
+                {
+                    GameManager.Instance.GameSpeed2 = GameManager.Instance.initialGameSpeed;
+                    GameManager.Instance.livesPlayer2.text = lives.ToString();
+                }
+                else
+                {
+                    GameManager.Instance.GameSpeed = GameManager.Instance.initialGameSpeed;
+                    GameManager.Instance.livesPlayer1.text = lives.ToString();
+                }
+            }
+            
+            else if(!isGod)
+            {
+                GameManager.Instance.GameOver();
+            }
+            
+            if (!isGod)
+            {
+                Destroy(other.gameObject);
+            }
+        }
+
+        
     }
 
     public void ResetGodMode()
@@ -93,10 +137,12 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(transform.position.x, 0f);
         isGod = false;
     }
+
+    
     
     IEnumerator GodMode()
     {
-        GameManager.Instance.timeLeft = 10;
+        timeleft = 10;
         transform.localScale = new Vector3(1.4f, 1.4f, 1.4f);
         transform.position = new Vector3(transform.position.x, 0.18f);
         isGod = true;
