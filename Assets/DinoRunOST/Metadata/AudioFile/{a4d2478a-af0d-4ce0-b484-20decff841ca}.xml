@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{a4d2478a-af0d-4ce0-b484-20decff841ca}">
+		<property name="assetPath">
+			<value>Track8_ESD3_Whoosh_Percy.wav</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>158.4338775510204</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{6739ea22-3527-41ea-b078-d74780a08911}</destination>
+		</relationship>
+	</object>
+</objects>

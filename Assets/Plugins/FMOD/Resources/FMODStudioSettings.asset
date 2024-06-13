@@ -380,8 +380,8 @@ MonoBehaviour:
   switchSettingsMigration: 1
   HasSourceProject: 1
   HasPlatforms: 1
-  sourceProjectPath: ../DinoRunOST/DinoRunOST.fspro
-  sourceBankPath: ../DinoRunOST/Build
+  sourceProjectPath: Assets/DinoRunOST/DinoRunOST.fspro
+  sourceBankPath: Assets/DinoRunOST/Build
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1
