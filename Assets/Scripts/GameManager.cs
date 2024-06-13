@@ -1,10 +1,13 @@
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    MusicControl musicControl;
+    
     public Player _player;
     public Player _player2;
     public Spawner _spawner1;
@@ -29,7 +32,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI livesPlayer1;
     public TextMeshProUGUI livesPlayer2;
     
-    private float score;
+    public float score;
 
 
 
@@ -74,10 +77,14 @@ public class GameManager : MonoBehaviour
         gameOverText.gameObject.SetActive(false);
         retryButton.gameObject.SetActive(false);
         if (isMultiplayer == false) UpdateTopScore();
+        // StartCoroutine(musicControl.MusicJump());
     }
 
     public void GameOver()
     {
+        // StopCoroutine(musicControl.MusicJump());
+        musicControl.MusicSwitch(6);
+        
         Obstacle[] obstacles = FindObjectsOfType<Obstacle>();
         
         foreach (var obstacle in obstacles)
@@ -158,6 +165,9 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 PauseGame();
+                musicControl.MusicSwitch(0);
+                musicControl.Drum1Control(0);
+                musicControl.DrumDelay();
             }
         }
     }
