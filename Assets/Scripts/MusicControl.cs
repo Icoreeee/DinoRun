@@ -1,73 +1,121 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using FMODUnity;
-using UnityEngine.SocialPlatforms.Impl;
+using FMOD.Studio;
 
 public class MusicControl : MonoBehaviour
 {
     public StudioEventEmitter Music;
+    public EventInstance MusicInst;
     public bool isPlaying;
 
-    private void MuteControl()
+    private static MusicControl instance = null;
+
+    public static MusicControl Instance
     {
-        if (Input.GetKeyDown(KeyCode.M) && isPlaying)
+        get
         {
-            Music.Stop();
-            isPlaying = !isPlaying;
-        }
-        else if (Input.GetKeyDown(KeyCode.M) && !isPlaying)
-        {
-            Music.Play();
-            isPlaying = !isPlaying;
+            return instance;
         }
     }
 
-    public void MusicSwitch(int switchVar)
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
+
+    private void MuteControl()
+    {
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            if (isPlaying)
+            {
+                Music.SetParameter("VolumeControl", 0);
+                isPlaying = !isPlaying;
+            }
+            else if (!isPlaying)
+            {
+                Music.SetParameter("VolumeControl", 1);
+                isPlaying = !isPlaying;
+            }
+        }
+    }
+
+        public void MusicSwitch(int switchVar)
     {
         Music.SetParameter("Switch Control", switchVar);
+        Debug.Log($"Part {switchVar + 1} active");
     }
 
     public void Drum1Control(int controlVar)
     {
         Music.SetParameter("Drums1 Control", controlVar);
+        Debug.Log($"Drums1 Control set to {controlVar}");
     }
 
     public IEnumerator DrumDelay()
     {
-        yield return new WaitForSeconds(60);
-        
+        Drum1Control(0);
+        Debug.Log($"Delay till drum is set to 1 is 60 sec");
+        yield return new WaitForSecondsRealtime(60);
         Drum1Control(1);
-        Debug.Log("Drums1 Control set to 1");
     }
 
-    public IEnumerator MusicJump()
+    public void MusicJumpStart()
     {
+        StartCoroutine(MusicDelayJump());
+    }
+
+    public void MusicJumpEnd()
+    {
+        StopCoroutine(MusicDelayJump());
+    }
+
+    public void DrumDelayStart()
+    {
+        StartCoroutine(MusicDelayJump());
+    }
+
+    public IEnumerator MusicDelayJump()
+    {
+        StopCoroutine(DrumDelay());
+        Drum1Control(1);
         MusicSwitch(1);
-        
-        yield return new WaitForSeconds(90);
-        
+        Debug.Log("Delay till next part: 30 sec \n It will be activated after the current one is over");
+        yield return new WaitForSecondsRealtime(30);
         MusicSwitch(2);
-
-        yield return new WaitForSeconds(120);
-        
+        Debug.Log("Delay till next part: 30 sec \n It will be activated after the current one is over");
+        yield return new WaitForSecondsRealtime(30);
         MusicSwitch(3);
-
-        yield return new WaitForSeconds(180);
-        
+        Debug.Log("Delay till next part: 30 sec \n It will be activated after the current one is over");
+        yield return new WaitForSecondsRealtime(30);
         MusicSwitch(4);
-
-        yield return new WaitForSeconds(240);
-        
+        Debug.Log("Delay till next part: 30 sec \n It will be activated after the current one is over");
+        yield return new WaitForSecondsRealtime(30);
         MusicSwitch(5);
+        Debug.Log("Delay till next part: 30 sec \n It will be activated after the current one is over");
     }
 
-    void Start()
+    private void Start()
     {
-        MusicSwitch(0);
+        Music = FindObjectOfType<StudioEventEmitter>();
         Music.Play();
+        isPlaying = true;        
+        MusicSwitch(0);
+        Music.SetParameter("VolumeControl", 1);     
         StartCoroutine(DrumDelay());
-        isPlaying = true;
+    }
+
+    private void Update()
+    {
+        MuteControl();
     }
 }

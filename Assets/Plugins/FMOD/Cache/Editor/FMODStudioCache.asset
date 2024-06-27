@@ -50,13 +50,14 @@ MonoBehaviour:
     Data3: -907979597
     Data4: 1025498635
   Banks:
-  - {fileID: -1192794525866517140}
+  - {fileID: 6058130210736979532}
   IsStream: 1
   Is3D: 0
   IsOneShot: 0
   Parameters:
   - {fileID: 3301210761890654363}
   - {fileID: -8431966610214966359}
+  - {fileID: 7087629052826332051}
   MinDistance: 1
   MaxDistance: 20
   Length: 164552
@@ -156,26 +157,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-4491134513672316431
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.strings.bank
-  m_EditorClassIdentifier: 
-  Path: ../DinoRunOST/Build/Desktop/Master.strings.bank
-  Name: Master.strings
-  StudioPath: bank:/Master.strings
-  lastModified: 638538701550964892
-  FileSizes:
-  - Name: Desktop
-    Value: 1242
-  Exists: 1
 --- !u!114 &-1552090355486570713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,26 +205,6 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
---- !u!114 &-1192794525866517140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
-  m_Name: bank:/Master.bank
-  m_EditorClassIdentifier: 
-  Path: ../DinoRunOST/Build/Desktop/Master.bank
-  Name: Master
-  StudioPath: bank:/Master
-  lastModified: 638538701550954907
-  FileSizes:
-  - Name: Desktop
-    Value: 13841248
-  Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,17 +218,17 @@ MonoBehaviour:
   m_Name: FMODStudioCache
   m_EditorClassIdentifier: 
   EditorBanks:
-  - {fileID: -4491134513672316431}
-  - {fileID: -1192794525866517140}
+  - {fileID: 8677868925259417338}
+  - {fileID: 6058130210736979532}
   EditorEvents:
   - {fileID: 8464210476945955403}
   - {fileID: -5697329790257911557}
   EditorParameters: []
   MasterBanks:
-  - {fileID: -1192794525866517140}
+  - {fileID: 6058130210736979532}
   StringsBanks:
-  - {fileID: -4491134513672316431}
-  cacheTime: 638538701550964892
+  - {fileID: 8677868925259417338}
+  cacheTime: 638550799160582220
   cacheVersion: 131618
 --- !u!114 &3075497498407145238
 MonoBehaviour:
@@ -344,6 +305,50 @@ MonoBehaviour:
   - Value B
   - Value C
   Exists: 1
+--- !u!114 &6058130210736979532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/DinoRunOST/Build/Desktop/Master.bank
+  Name: Master
+  StudioPath: bank:/Master
+  lastModified: 638550799160562599
+  FileSizes:
+  - Name: Desktop
+    Value: 13841120
+  Exists: 1
+--- !u!114 &7087629052826332051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/DinoRunOST/VolumeControl
+  m_EditorClassIdentifier: 
+  Name: VolumeControl
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 1
+  ID:
+    data1: 2961286186
+    data2: 2244196591
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &8464210476945955403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -363,7 +368,7 @@ MonoBehaviour:
     Data3: 922898615
     Data4: 467004310
   Banks:
-  - {fileID: -1192794525866517140}
+  - {fileID: 6058130210736979532}
   IsStream: 1
   Is3D: 0
   IsOneShot: 0
@@ -379,3 +384,23 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 56439
+--- !u!114 &8677868925259417338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master.strings.bank
+  m_EditorClassIdentifier: 
+  Path: Assets/DinoRunOST/Build/Desktop/Master.strings.bank
+  Name: Master.strings
+  StudioPath: bank:/Master.strings
+  lastModified: 638550799160582220
+  FileSizes:
+  - Name: Desktop
+    Value: 1298
+  Exists: 1

@@ -3,10 +3,10 @@ using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-    MusicControl musicControl;
     
     public Player _player;
     public Player _player2;
@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public float GameSpeed { get; set; }
     public float GameSpeed2 { get; set; }
 
-    private bool _isGameStopped;
+    public bool _isGameStopped;
 
     public TextMeshProUGUI gameOverText;
     public TextMeshProUGUI scoreText;
@@ -34,7 +34,21 @@ public class GameManager : MonoBehaviour
     
     public float score;
 
+    IEnumerator RestartDelay()
+    {
+        MusicControl.Instance.MusicSwitch(6);
 
+        yield return new WaitForSecondsRealtime(5);
+
+        MusicControl.Instance.Drum1Control(0);
+        MusicControl.Instance.MusicSwitch(0);
+    }
+
+    IEnumerator BtnDelay()
+    {
+        yield return new WaitForSecondsRealtime(5);
+        retryButton.gameObject.SetActive(true);
+    }
 
     private void Awake()
     {
@@ -76,14 +90,16 @@ public class GameManager : MonoBehaviour
         
         gameOverText.gameObject.SetActive(false);
         retryButton.gameObject.SetActive(false);
-        if (isMultiplayer == false) UpdateTopScore();
-        // StartCoroutine(musicControl.MusicJump());
+        if (!isMultiplayer) UpdateTopScore();
+
+        StopAllCoroutines();
+        MusicControl.Instance.MusicJumpStart();
     }
 
     public void GameOver()
     {
-        // StopCoroutine(musicControl.MusicJump());
-        musicControl.MusicSwitch(6);
+        MusicControl.Instance.StopAllCoroutines();
+        StartCoroutine(RestartDelay());
         
         Obstacle[] obstacles = FindObjectsOfType<Obstacle>();
         
@@ -108,7 +124,7 @@ public class GameManager : MonoBehaviour
             _spawner2.gameObject.SetActive(false);
         }
         gameOverText.gameObject.SetActive(true);
-        retryButton.gameObject.SetActive(true);
+        StartCoroutine(BtnDelay());
         _player.StopAnimation();
         _player.ResetGodMode();
         godModeTextP1.text = "God Mode Player 1 (sec): 0:00";
@@ -130,7 +146,7 @@ public class GameManager : MonoBehaviour
             scoreText.text = Mathf.FloorToInt(score).ToString("D7");
         }
 
-        
+
     }
 
     private void Update()
@@ -165,9 +181,6 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 PauseGame();
-                musicControl.MusicSwitch(0);
-                musicControl.Drum1Control(0);
-                musicControl.DrumDelay();
             }
         }
     }
@@ -191,6 +204,7 @@ public class GameManager : MonoBehaviour
             ContinueGame();
             return;
         }
+        
         Time.timeScale = 0;
         pauseMenu.gameObject.SetActive(true);
     }
@@ -204,5 +218,9 @@ public class GameManager : MonoBehaviour
     public void ExitGame()
     {
         SceneManager.LoadScene(0);
+        MusicControl.Instance.Music.Stop();
+        MusicControl.Instance.MusicSwitch(0);
+        StartCoroutine(MusicControl.Instance.DrumDelay());
+        MusicControl.Instance.Music.Play();
     }
 }
